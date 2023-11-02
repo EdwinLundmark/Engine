@@ -4,32 +4,12 @@
 #include <GLFW/glfw3.h>
 #include "load-shader.hpp"
 
+GLFWwindow* initWindow();
+void windowLoop(GLFWwindow* window, GLuint programID, GLuint vertexbuffer);
+
 int main() {
 
-	if (!glfwInit()) {
-		fprintf(stderr, "Couldn't initialize GLFW.\n");
-		return -1;
-	}
-
-	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
-
-	GLFWwindow* window;
-	window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
-	if (window == NULL) {
-		fprintf(stderr, "Failed to open GLFW window.\n");
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window); // Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return -1;
-	}
+	GLFWwindow* window = initWindow();
 
 	// ***********************TRIANGLE CODE***************************
 
@@ -53,10 +33,45 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("shader.vertexshader", "shader.fragmentshader");
+	GLuint programID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
 
 	// *************************TRIANGLE CODE**************************
 
+	windowLoop(window, programID, vertexbuffer);
+	return 0;
+
+}
+
+GLFWwindow* initWindow() {
+	if (!glfwInit()) {
+		fprintf(stderr, "Couldn't initialize GLFW.\n");
+		return nullptr;
+	}
+
+	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+
+	GLFWwindow* window;
+	window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
+	if (window == NULL) {
+		fprintf(stderr, "Failed to open GLFW window.\n");
+		glfwTerminate();
+		return nullptr;
+	}
+
+	glfwMakeContextCurrent(window); // Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return nullptr;
+	}
+
+	return window;
+}
+
+void windowLoop(GLFWwindow* window, GLuint programID, GLuint vertexbuffer) {
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
@@ -89,5 +104,4 @@ int main() {
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(window) == 0);
-
 }
