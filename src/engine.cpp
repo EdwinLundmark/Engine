@@ -1,16 +1,14 @@
-#include <iostream>
 #define GLEW_STATIC
 #include <glew.h>
 #include <GLFW/glfw3.h>
 #include "load-shader.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "engine.hpp"
 
-GLFWwindow* initWindow();
-void windowLoop(GLFWwindow* window, GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp);
 
-int main() {
+void Engine::startEngine() {
 
-	GLFWwindow* window = initWindow();
+	initWindow();
 
 	// ***********************TRIANGLE CODE***************************
 
@@ -72,15 +70,14 @@ int main() {
 
 
 
-	windowLoop(window, programID, vertexbuffer, MatrixID, mvp);
-	return 0;
-
+	windowLoop(programID, vertexbuffer, MatrixID, mvp);
+	return;
 }
 
-GLFWwindow* initWindow() {
+void Engine::initWindow() {
 	if (!glfwInit()) {
 		fprintf(stderr, "Couldn't initialize GLFW.\n");
-		return nullptr;
+		return;
 	}
 
 	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
@@ -88,25 +85,24 @@ GLFWwindow* initWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
-	GLFWwindow* window;
 	window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
 	if (window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
-		return nullptr;
+		return;
 	}
 
 	glfwMakeContextCurrent(window); // Initialize GLEW
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
-		return nullptr;
+		return;
 	}
 
-	return window;
+	return;
 }
 
-void windowLoop(GLFWwindow* window, GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp) {
+void Engine::windowLoop(GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp) {
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
@@ -130,7 +126,7 @@ void windowLoop(GLFWwindow* window, GLuint programID, GLuint vertexbuffer, GLuin
 		);
 
 		// Send our transformation to the currently bound shader, in the "MVP" uniform
-// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
+		// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
 		// Draw the triangle !
