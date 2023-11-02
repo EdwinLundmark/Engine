@@ -12,6 +12,9 @@ target_link_directories(engine PUBLIC "${CMAKE_SOURCE_DIR}/lib/")
 
 target_link_libraries(engine PRIVATE opengl32 glew32s glfw3 load-shader)
 
-add_custom_command(TARGET engine PRE_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/src/shaders/ $<TARGET_FILE_DIR:engine>)
+add_custom_target(CopyShaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders/ ${CMAKE_BINARY_DIR}/shaders/
+    SOURCES ${CMAKE_SOURCE_DIR}/shaders/
+)
+
+add_dependencies(engine CopyShaders)
