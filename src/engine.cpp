@@ -8,7 +8,7 @@
 
 void Engine::startEngine() {
 
-	initWindow();
+	if(!initWindow()) return;
 
 	// ***********************TRIANGLE CODE***************************
 
@@ -74,10 +74,10 @@ void Engine::startEngine() {
 	return;
 }
 
-void Engine::initWindow() {
+bool Engine::initWindow() {
 	if (!glfwInit()) {
 		fprintf(stderr, "Couldn't initialize GLFW.\n");
-		return;
+		return false;
 	}
 
 	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
@@ -89,17 +89,17 @@ void Engine::initWindow() {
 	if (window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
-		return;
+		return false;
 	}
 
 	glfwMakeContextCurrent(window); // Initialize GLEW
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
-		return;
+		return false;
 	}
 
-	return;
+	return true;
 }
 
 void Engine::windowLoop(GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp) {
@@ -140,4 +140,6 @@ void Engine::windowLoop(GLuint programID, GLuint vertexbuffer, GLuint MatrixID, 
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(window) == 0);
+
+	return;
 }

@@ -9,6 +9,6 @@ public:
 private:
 	GLFWwindow* window;
 
-	void initWindow();
+	bool initWindow();
 	void windowLoop(GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp);
 };
