@@ -41,7 +41,6 @@ void Engine::startEngine() {
 	// Get a handle for our "MVP" uniform
 	// Only during the initialisation
 	GLuint MatrixID = glGetUniformLocation(shaderProgramID, "MVP");
-	printf("glGetUniformLocation %d\n", glGetError());
 
 
 
@@ -56,6 +55,19 @@ void Engine::startEngine() {
 void Engine::addRenderingObject(std::vector<float> vertexBufferData) {
 	RenderingObject object(vertexBufferData);
 	m_renderingObjects.push_back(object);
+}
+
+void GLAPIENTRY MessageCallback(GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam)
+{
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		type, severity, message);
 }
 
 
@@ -84,6 +96,12 @@ bool Engine::init() {
 		return false;
 	}
 
+
+
+	// During init, enable debug output
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
+
 	return true;
 }
 
@@ -96,7 +114,6 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 mvp) 
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shaderProgramID);
-		printf("glUseProgram %d\n", glGetError());
 
 
 
