@@ -3,36 +3,14 @@
 #include <GLFW/glfw3.h>
 #include "load-shader.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "renderingobject.hpp"
 #include "engine.hpp"
-
+#include <vector>
 
 void Engine::startEngine() {
 
-	if(!initWindow()) return;
-
-	// ***********************TRIANGLE CODE***************************
-
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f,
-		 0.0f,  1.0f, 0.0f,
-	};
-
-	// This will identify our vertex buffer
-	GLuint vertexbuffer;
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers(1, &vertexbuffer);
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
+	GLuint shaderProgramID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
 
 	// *************************TRIANGLE CODE**************************
 
@@ -62,7 +40,8 @@ void Engine::startEngine() {
 
 	// Get a handle for our "MVP" uniform
 	// Only during the initialisation
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	GLuint MatrixID = glGetUniformLocation(shaderProgramID, "MVP");
+	printf("glGetUniformLocation %d\n", glGetError());
 
 
 
@@ -70,11 +49,17 @@ void Engine::startEngine() {
 
 
 
-	windowLoop(programID, vertexbuffer, MatrixID, mvp);
+	windowLoop(shaderProgramID, MatrixID, mvp);
 	return;
 }
 
-bool Engine::initWindow() {
+void Engine::addRenderingObject(std::vector<float> vertexBufferData) {
+	RenderingObject object(vertexBufferData);
+	m_renderingObjects.push_back(object);
+}
+
+
+bool Engine::init() {
 	if (!glfwInit()) {
 		fprintf(stderr, "Couldn't initialize GLFW.\n");
 		return false;
@@ -85,14 +70,14 @@ bool Engine::initWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
-	window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
-	if (window == NULL) {
+	m_window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
+	if (m_window == NULL) {
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		return false;
 	}
 
-	glfwMakeContextCurrent(window); // Initialize GLEW
+	glfwMakeContextCurrent(m_window); // Initialize GLEW
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Failed to initialize GLEW\n");
@@ -102,44 +87,30 @@ bool Engine::initWindow() {
 	return true;
 }
 
-void Engine::windowLoop(GLuint programID, GLuint vertexbuffer, GLuint MatrixID, glm::mat4 mvp) {
+void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 mvp) {
 	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	do {
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(programID);
+		glUseProgram(shaderProgramID);
+		printf("glUseProgram %d\n", glGetError());
 
 
-		// 1st attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
 
-		// Send our transformation to the currently bound shader, in the "MVP" uniform
-		// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
-
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray(0);
+		for (auto& object : m_renderingObjects) {
+			object.drawObject(MatrixID, mvp);
+		}
 
 		// Swap buffers
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 
 	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(window) == 0);
+	while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+		glfwWindowShouldClose(m_window) == 0);
 
 	return;
 }
