@@ -6,12 +6,16 @@
 #include <iostream>
 
 RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
-    : m_vertexBufferData(vertexBufferData), m_vertexbuffer() {
+    : m_vertexBufferData(vertexBufferData), m_vbo(), m_vba() {
     
-	glGenBuffers(1, &m_vertexbuffer);
+	glGenBuffers(1, &m_vbo);
 
     // The following commands will talk about our 'vertexbuffer' buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+
+	glGenVertexArrays(1, &m_vba);
+	glBindVertexArray(m_vba);
+
 
     // Give our vertices to OpenGL.
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_vertexBufferData.size(), &m_vertexBufferData.front(), GL_STATIC_DRAW);
@@ -19,9 +23,9 @@ RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
 
 void RenderingObject::drawObject(GLuint MatrixID, glm::mat4 mvp) {
 	// 1st attribute buffer : vertices
-	printf("start\n");
+
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glVertexAttribPointer(
 		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
 		3,                  // size
