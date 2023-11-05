@@ -6,7 +6,7 @@
 #include <iostream>
 
 RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
-    : m_vertexBufferData(vertexBufferData), m_vertexbuffer() {
+    : m_vertexBufferData(vertexBufferData), m_vertexbuffer(), m_vba() {
     
 	glGenBuffers(1, &m_vertexbuffer);
 
@@ -19,7 +19,9 @@ RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
 
 void RenderingObject::drawObject(GLuint MatrixID, glm::mat4 mvp) {
 	// 1st attribute buffer : vertices
-	printf("start\n");
+	glGenVertexArrays(1, &m_vba);
+	glBindVertexArray(m_vba);
+	
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
 	glVertexAttribPointer(

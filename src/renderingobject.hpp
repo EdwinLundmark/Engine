@@ -14,4 +14,5 @@ public:
 private:
 	std::vector<GLfloat> m_vertexBufferData;
 	GLuint m_vertexbuffer;
+	GLuint m_vba;
 };
