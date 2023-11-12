@@ -12,6 +12,7 @@ target_link_libraries(engine PRIVATE opengl32 glew32s glfw3 load-shader renderin
 
 add_library(renderingobject src/renderingobject.hpp src/renderingobject.cpp)
 target_include_directories(renderingobject PUBLIC "${CMAKE_SOURCE_DIR}/include/")
+target_link_libraries(renderingobject PRIVATE glfw3)
 
 target_include_directories(main PUBLIC "${CMAKE_SOURCE_DIR}/include/")
 target_link_directories(main PUBLIC "${CMAKE_SOURCE_DIR}/lib/")

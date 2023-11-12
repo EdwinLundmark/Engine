@@ -14,6 +14,8 @@ public:
 private:
 	GLFWwindow* m_window;
 	std::vector<RenderingObject> m_renderingObjects;
+	int m_width = 1024;
+	int m_height = 768;
 
-	void windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 mvp);
+	void windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 Projection);
 };
