@@ -22,7 +22,9 @@ RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_vertexBufferData.size(), &m_vertexBufferData.front(), GL_STATIC_DRAW);
 }
 
-void RenderingObject::drawObject(GLuint MatrixID, glm::mat4 Projection, double deltaTime, double xpos, double ypos) {
+void RenderingObject::drawObject(GLFWwindow* window, GLuint MatrixID, glm::mat4 Projection, double deltaTime, double xpos, double ypos) {
+
+	// TODO: Flytta allt det här till en egen klass
 
 	float speed = 3.0f; // 3 units / second
 	double mouseSpeed = 0.1;
@@ -32,12 +34,9 @@ void RenderingObject::drawObject(GLuint MatrixID, glm::mat4 Projection, double d
 	// vertical angle : 0, look at the horizon
 	static double verticalAngle = 0.0f;
 
-	
 
 	horizontalAngle += mouseSpeed * deltaTime * double(1024.0 / 2.0 - xpos);
 	verticalAngle += mouseSpeed * deltaTime * double(768.0 / 2.0 - ypos);
-
-	printf("%f, %f, %f, (%f, %f)\n", horizontalAngle, verticalAngle, deltaTime, xpos, ypos);
 
 	glm::vec3 direction(
 		cos(verticalAngle) * sin(horizontalAngle),
@@ -53,6 +52,22 @@ void RenderingObject::drawObject(GLuint MatrixID, glm::mat4 Projection, double d
 
 	glm::vec3 up = glm::cross(right, direction);
 
+	// Move forward
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		position += direction * (float)deltaTime * (float)speed;
+	}
+	// Move backward
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		position -= direction * (float)deltaTime * (float)speed;
+	}
+	// Strafe right
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		position += right * (float)deltaTime * (float)speed;
+	}
+	// Strafe left
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		position -= right * (float)deltaTime * (float)speed;
+	}
 
 
 	glm::mat4 View = glm::lookAt(

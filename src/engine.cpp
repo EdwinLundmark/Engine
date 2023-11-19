@@ -78,6 +78,8 @@ bool Engine::init() {
 	}
 
 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// During init, enable debug output
 	glEnable(GL_DEBUG_OUTPUT);
@@ -108,7 +110,7 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 Proje
 		glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
 
 		for (auto& object : m_renderingObjects) {
-			object.drawObject(MatrixID, Projection, deltaTime, xpos, ypos);
+			object.drawObject(m_window, MatrixID, Projection, deltaTime, xpos, ypos);
 		}
 
 		// Swap buffers

@@ -9,7 +9,7 @@ class RenderingObject {
 public:
 	RenderingObject(std::vector<GLfloat> vertexBufferData);
 
-	void drawObject(GLuint MatrixID, glm::mat4 Projection, double deltaTime, double xpos, double ypos);
+	void drawObject(GLFWwindow* window, GLuint MatrixID, glm::mat4 Projection, double deltaTime, double xpos, double ypos);
 
 private:
 	std::vector<GLfloat> m_vertexBufferData;
