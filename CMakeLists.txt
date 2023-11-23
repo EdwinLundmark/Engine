@@ -1,23 +1,20 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(engine)
 
-ADD_EXECUTABLE(main src/main.cpp)
+file(GLOB ENGINE_SOURCES src/*.cpp)
+list(REMOVE_ITEM ENGINE_SOURCES "main.cpp")
 
-add_library(load-shader src/load-shader.cpp src/load-shader.hpp)
-target_include_directories(load-shader PUBLIC "${CMAKE_SOURCE_DIR}/include/")
+file(GLOB ENGINE_HEADERS src/*.cpp)
 
-add_library(engine src/engine.cpp src/engine.hpp)
+ADD_LIBRARY(engine ${ENGINE_SOURCES})
+
 target_include_directories(engine PUBLIC "${CMAKE_SOURCE_DIR}/include/")
-target_link_libraries(engine PRIVATE opengl32 glew32s glfw3 load-shader renderingobject)
+target_link_directories(engine PUBLIC "${CMAKE_SOURCE_DIR}/lib/" )
+target_link_libraries(engine opengl32 glew32s glfw3)
 
-add_library(renderingobject src/renderingobject.hpp src/renderingobject.cpp)
-target_include_directories(renderingobject PUBLIC "${CMAKE_SOURCE_DIR}/include/")
-target_link_libraries(renderingobject PRIVATE glfw3)
+ADD_EXECUTABLE(main "src/main.cpp")
+target_link_libraries(main engine)
 
-target_include_directories(main PUBLIC "${CMAKE_SOURCE_DIR}/include/")
-target_link_directories(main PUBLIC "${CMAKE_SOURCE_DIR}/lib/")
-
-target_link_libraries(main PRIVATE engine)
 
 add_custom_target(CopyShaders
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/shaders/ ${CMAKE_BINARY_DIR}/shaders/
