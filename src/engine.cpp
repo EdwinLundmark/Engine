@@ -12,24 +12,11 @@ void Engine::startEngine() {
 	// Create and compile our GLSL program from the shaders
 	GLuint shaderProgramID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
 
-	// *************************TRIANGLE CODE**************************
-
-	// *************************MATRIX CODE**************************
-	
-
 	// Get a handle for our "MVP" uniform
 	// Only during the initialisation
 	GLuint MatrixID = glGetUniformLocation(shaderProgramID, "MVP");
 
-
-
-	// *************************MATRIX CODE**************************
-
-
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.1f, 100.0f);
-
-	windowLoop(shaderProgramID, MatrixID, Projection);
+	windowLoop(shaderProgramID, MatrixID);
 	return;
 }
 
@@ -88,7 +75,7 @@ bool Engine::init() {
 	return true;
 }
 
-void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 Projection) {
+void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID) {
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -109,8 +96,11 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 Proje
 		glfwGetCursorPos(m_window, &xpos, &ypos);
 		glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
 
+		m_camera.moveWASD(m_window, (float)deltaTime);
+		m_camera.rotateFP((float)deltaTime, (float)xpos, (float)ypos);
+
 		for (auto& object : m_renderingObjects) {
-			object.drawObject(m_window, MatrixID, Projection, deltaTime, xpos, ypos);
+			object.drawObject(m_window, MatrixID, m_camera);
 		}
 
 		// Swap buffers

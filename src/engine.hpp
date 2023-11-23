@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "renderingobject.hpp"
+#include "camera.hpp"
 #include <vector>
 
 class Engine {
@@ -17,5 +18,7 @@ private:
 	int m_width = 1024;
 	int m_height = 768;
 
-	void windowLoop(GLuint shaderProgramID, GLuint MatrixID, glm::mat4 Projection);
+	Camera m_camera{ 45.0f, m_width, m_height, 0.1f, 100.0f };
+
+	void windowLoop(GLuint shaderProgramID, GLuint MatrixID);
 };

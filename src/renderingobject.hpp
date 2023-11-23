@@ -3,13 +3,14 @@
 #include <glew.h>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
+#include "camera.hpp"
 
 
 class RenderingObject {
 public:
 	RenderingObject(std::vector<GLfloat> vertexBufferData);
 
-	void drawObject(GLFWwindow* window, GLuint MatrixID, glm::mat4 Projection, double deltaTime, double xpos, double ypos);
+	void drawObject(GLFWwindow* window, GLuint MatrixID, Camera& camera);
 
 private:
 	std::vector<GLfloat> m_vertexBufferData;
