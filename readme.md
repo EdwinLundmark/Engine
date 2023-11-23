@@ -1,5 +1,5 @@
 # Simple OpenGL engine
-This is a engine made with C++ and OpenGL
+This is an engine made with C++ and OpenGL
 
 ## Dependencies
 * CMake
