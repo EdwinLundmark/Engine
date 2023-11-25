@@ -5,7 +5,7 @@
 // TODO: set default values, add pitch and yaw maybe
 Camera::Camera(float FOV, int width, int height, float near, float far)
 {
-	m_position = glm::vec3(0.0f,0.0f,2.0f);
+	m_position = glm::vec3(0.0f,0.0f,4.0f);
 	m_direction = glm::vec3(0.0f, 0.0f, -1.0f);
 	m_right = glm::vec3(1.0f, 0.0f, 0.0f);
 	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -60,6 +60,14 @@ void Camera::rotateFP(float deltaTime, float xpos, float ypos)
 	m_pitch += mouseSpeed * deltaTime * (768.0f / 2.0f - ypos);
 	m_yaw += mouseSpeed * deltaTime * (1024.0f / 2.0f - xpos);
 
+	if (m_pitch < -3.14f / 2.0f) m_pitch = -3.14f / 2.0f;
+	
+	if (m_pitch > 3.14f / 2.0f) m_pitch = 3.14f / 2.0f;
+	
+	if(m_yaw < -3.14) m_yaw = 3.14;
+
+	if(m_yaw > 3.14 * 3) m_yaw = 3.14;
+
 	updateViewMatrix();
 
 	return;
@@ -70,12 +78,12 @@ void Camera::moveWASD(GLFWwindow* window, float deltaTime)
 	// Move forward
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		m_position += m_direction * deltaTime * moveSpeed;
+		m_position += glm::normalize(glm::vec3(m_direction.x, 0.0f, m_direction.z)) * deltaTime * moveSpeed;
 	}
 	// Move backward
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		m_position -= m_direction * deltaTime * moveSpeed;
+		m_position -= glm::normalize(glm::vec3(m_direction.x, 0.0f, m_direction.z)) * deltaTime * moveSpeed;
 	}
 	// Strafe right
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
@@ -86,6 +94,16 @@ void Camera::moveWASD(GLFWwindow* window, float deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		m_position -= m_right * deltaTime * moveSpeed;
+	}
+	// Go up
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		m_position += glm::vec3(0.0f, 1.0f, 0.0f) * deltaTime * moveSpeed;
+	}
+	// Go down
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		m_position += glm::vec3(0.0f, -1.0f, 0.0f) * deltaTime * moveSpeed;
 	}
 
 	updateViewMatrix();

@@ -6,7 +6,7 @@ class Camera
 {
 public:
 	float mouseSpeed = 0.5f;
-	float moveSpeed = 1.0f;
+	float moveSpeed = 1.7f;
 
 	Camera(float FOV, int width, int height, float near, float far);
 
