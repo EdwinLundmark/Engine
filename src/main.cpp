@@ -1,7 +1,8 @@
 #include "engine.hpp"
 #include <vector>
 
-int main() {
+int main()
+{
 	Engine engine{};
 
 	if(!engine.init()) return 0;

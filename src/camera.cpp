@@ -3,8 +3,9 @@
 #include "GLFW\glfw3.h"
 
 // TODO: set default values, add pitch and yaw maybe
-Camera::Camera(float FOV, int width, int height, float near, float far) {
-	m_position = glm::vec3(0.0f,-2.0f,0.0f);
+Camera::Camera(float FOV, int width, int height, float near, float far)
+{
+	m_position = glm::vec3(0.0f,0.0f,2.0f);
 	m_direction = glm::vec3(0.0f, 0.0f, -1.0f);
 	m_right = glm::vec3(1.0f, 0.0f, 0.0f);
 	m_up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -15,7 +16,8 @@ Camera::Camera(float FOV, int width, int height, float near, float far) {
 	updateViewMatrix();
 }
 
-void Camera::updateViewMatrix() {
+void Camera::updateViewMatrix()
+{
 	m_direction = glm::vec3(
 		cos(m_pitch) * sin(m_yaw),
 		sin(m_pitch),
@@ -36,21 +38,25 @@ void Camera::updateViewMatrix() {
 		m_position + m_direction, // and looks here : at the same position, plus "direction"
 		m_up
 	);
+	return;
 }
 
-void Camera::move(const glm::vec3& position) {
+void Camera::move(const glm::vec3& position)
+{
 	m_position = position;
 	updateViewMatrix();
 	return;
 }
 
-void Camera::moveTo(const glm::vec3& position) {
+void Camera::moveTo(const glm::vec3& position)
+{
 	m_position += position;
 	updateViewMatrix();
 	return;
 }
 
-void Camera::rotateFP(float deltaTime, float xpos, float ypos) {
+void Camera::rotateFP(float deltaTime, float xpos, float ypos)
+{
 	m_pitch += mouseSpeed * deltaTime * (768.0f / 2.0f - ypos);
 	m_yaw += mouseSpeed * deltaTime * (1024.0f / 2.0f - xpos);
 
@@ -59,21 +65,26 @@ void Camera::rotateFP(float deltaTime, float xpos, float ypos) {
 	return;
 }
 
-void Camera::moveWASD(GLFWwindow* window, float deltaTime) {
+void Camera::moveWASD(GLFWwindow* window, float deltaTime)
+{
 	// Move forward
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
 		m_position += m_direction * deltaTime * moveSpeed;
 	}
 	// Move backward
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
 		m_position -= m_direction * deltaTime * moveSpeed;
 	}
 	// Strafe right
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
 		m_position += m_right * deltaTime * moveSpeed;
 	}
 	// Strafe left
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
 		m_position -= m_right * deltaTime * moveSpeed;
 	}
 
@@ -82,6 +93,7 @@ void Camera::moveWASD(GLFWwindow* window, float deltaTime) {
 }
 
 
-glm::mat4 Camera::getVPMatrix() {
-	return m_view;
+glm::mat4 Camera::getVPMatrix()
+{
+	return m_projection * m_view;
 }

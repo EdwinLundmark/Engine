@@ -8,7 +8,8 @@
 #include <iostream>
 
 RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
-    : m_vertexBufferData(vertexBufferData), m_vbo(), m_vba() {
+    : m_vertexBufferData(vertexBufferData), m_vbo(), m_vba()
+{
     
 	glGenBuffers(1, &m_vbo);
 
@@ -23,7 +24,8 @@ RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_vertexBufferData.size(), &m_vertexBufferData.front(), GL_STATIC_DRAW);
 }
 
-void RenderingObject::drawObject(GLFWwindow* window, GLuint MatrixID, Camera& camera) {
+void RenderingObject::drawObject(GLFWwindow* window, GLuint MatrixID, Camera& camera)
+{
 
 	// Model matrix : an identity matrix (model will be at the origin)
 	glm::mat4 Model = glm::mat4(1.0f);

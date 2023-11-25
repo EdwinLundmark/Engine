@@ -7,7 +7,8 @@
 #include "camera.hpp"
 #include <vector>
 
-class Engine {
+class Engine
+{
 public:
 	bool init();
 	void startEngine();

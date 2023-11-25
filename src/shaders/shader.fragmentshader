@@ -3,6 +3,7 @@
 out vec3 color;
 in vec3 fragPos;
 
-void main(){
+void main()
+{
   color = fragPos;
 }

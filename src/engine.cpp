@@ -7,7 +7,8 @@
 #include "engine.hpp"
 #include <vector>
 
-void Engine::startEngine() {
+void Engine::startEngine()
+{
 
 	// Create and compile our GLSL program from the shaders
 	GLuint shaderProgramID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
@@ -20,7 +21,8 @@ void Engine::startEngine() {
 	return;
 }
 
-void Engine::addRenderingObject(std::vector<float> vertexBufferData) {
+void Engine::addRenderingObject(std::vector<float> vertexBufferData)
+{
 	RenderingObject object(vertexBufferData);
 	m_renderingObjects.push_back(object);
 }
@@ -39,8 +41,10 @@ void GLAPIENTRY MessageCallback(GLenum source,
 }
 
 
-bool Engine::init() {
-	if (!glfwInit()) {
+bool Engine::init()
+{
+	if (!glfwInit())
+	{
 		fprintf(stderr, "Couldn't initialize GLFW.\n");
 		return false;
 	}
@@ -51,7 +55,8 @@ bool Engine::init() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
 	m_window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
-	if (m_window == NULL) {
+	if (m_window == NULL)
+	{
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		return false;
@@ -59,7 +64,8 @@ bool Engine::init() {
 
 	glfwMakeContextCurrent(m_window); // Initialize GLEW
 	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
+	if (glewInit() != GLEW_OK)
+	{
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return false;
 	}
@@ -75,7 +81,8 @@ bool Engine::init() {
 	return true;
 }
 
-void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID) {
+void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID)
+{
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -84,7 +91,8 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID) {
 	double deltaTime = 0;
 	double xpos, ypos;
 
-	do {
+	do
+	{
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -99,7 +107,8 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID) {
 		m_camera.moveWASD(m_window, (float)deltaTime);
 		m_camera.rotateFP((float)deltaTime, (float)xpos, (float)ypos);
 
-		for (auto& object : m_renderingObjects) {
+		for (auto& object : m_renderingObjects)
+		{
 			object.drawObject(m_window, MatrixID, m_camera);
 		}
 

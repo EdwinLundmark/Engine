@@ -6,7 +6,8 @@
 #include "camera.hpp"
 
 
-class RenderingObject {
+class RenderingObject
+{
 public:
 	RenderingObject(std::vector<GLfloat> vertexBufferData);
 

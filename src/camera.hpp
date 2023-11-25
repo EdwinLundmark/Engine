@@ -2,10 +2,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "GLFW\glfw3.h"
 
-class Camera {
+class Camera
+{
 public:
-	float mouseSpeed = 3.0f;
-	float moveSpeed = 0.1f;
+	float mouseSpeed = 0.5f;
+	float moveSpeed = 1.0f;
 
 	Camera(float FOV, int width, int height, float near, float far);
 
