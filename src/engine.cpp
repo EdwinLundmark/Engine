@@ -27,6 +27,11 @@ void Engine::addRenderingObject(std::vector<float> vertexBufferData)
 	m_renderingObjects.push_back(object);
 }
 
+void Engine::addRenderingObject(RenderingObject renderingObject)
+{
+	m_renderingObjects.push_back(renderingObject);
+}
+
 void GLAPIENTRY MessageCallback(GLenum source,
 	GLenum type,
 	GLuint id,

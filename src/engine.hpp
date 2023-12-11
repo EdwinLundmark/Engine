@@ -13,6 +13,7 @@ public:
 	bool init();
 	void startEngine();
 	void addRenderingObject(std::vector<GLfloat> vertexBufferData);
+	void addRenderingObject(RenderingObject renderingObject);
 private:
 	GLFWwindow* m_window;
 	std::vector<RenderingObject> m_renderingObjects;

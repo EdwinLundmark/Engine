@@ -12,15 +12,9 @@ RenderingObject::RenderingObject(std::vector<GLfloat> vertexBufferData)
 {
     
 	glGenBuffers(1, &m_vbo);
-
-    // The following commands will talk about our 'vertexbuffer' buffer
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-
 	glGenVertexArrays(1, &m_vba);
-	glBindVertexArray(m_vba);
 
-
-    // Give our vertices to OpenGL.
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * m_vertexBufferData.size(), &m_vertexBufferData.front(), GL_STATIC_DRAW);
 }
 
@@ -28,12 +22,13 @@ void RenderingObject::drawObject(GLFWwindow* window, GLuint MatrixID, Camera& ca
 {
 
 	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model = glm::mat4(1.0f);
 
 	glm::mat4 vp = camera.getVPMatrix();
 
-	glm::mat4 mvp = vp * Model; // Remember, matrix multiplication is the other way around
+	glm::mat4 mvp = vp * m_translation * m_model; // Remember, matrix multiplication is the other way around
 
+	glBindVertexArray(m_vba);
+    // Give our vertices to OpenGL.
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(
@@ -51,5 +46,10 @@ void RenderingObject::drawObject(GLFWwindow* window, GLuint MatrixID, Camera& ca
 	glDrawArrays(GL_TRIANGLES, 0, (int)(m_vertexBufferData.size() / 3)); // Starting from vertex 0; 3 vertices total -> 1 triangle
 
 	glDisableVertexAttribArray(0);
+	glBindVertexArray(0);
+}
 
+void RenderingObject::setPos(glm::vec3 position) {
+	m_translation = glm::translate(glm::mat4(1.0f), position);
+	return;
 }
