@@ -9,16 +9,17 @@
 class RenderingObject
 {
 public:
-	RenderingObject(std::vector<GLfloat> vertexBufferData);
-
-	void drawObject(GLFWwindow* window, GLuint MatrixID, Camera& camera);
+	RenderingObject(std::vector<GLfloat> vertexBufferData,GLuint shaderID);
 
 	void setPos(glm::vec3 position);
+	
+	std::vector<GLfloat> vertexBufferData;
+	GLuint vbo;
+	GLuint vao;
+	GLuint shaderID;
+	GLuint matrixUniform;
 
-private:
-	std::vector<GLfloat> m_vertexBufferData;
-	GLuint m_vbo;
-	GLuint m_vba;
-	glm::mat4 m_model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	glm::mat4 m_translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
+	glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
+
 };

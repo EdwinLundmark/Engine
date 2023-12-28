@@ -1,13 +1,19 @@
 #include "engine.hpp"
 #include <vector>
 
+void mainLoop(Engine engine) {
+    return;
+}
+
 int main()
 {
 	Engine engine{};
 
-	if(!engine.init()) return 0;
+	if(!engine.init()) return 1;
 
-    RenderingObject cube{ {
+    GLuint shaderProgramID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
+
+    std::vector<float> cubeData = {
         -1.0f,-1.0f,-1.0f, // triangle 1 : begin
         -1.0f,-1.0f, 1.0f,
         -1.0f, 1.0f, 1.0f, // triangle 1 : end
@@ -44,45 +50,10 @@ int main()
         1.0f, 1.0f, 1.0f,
         -1.0f, 1.0f, 1.0f,
         1.0f,-1.0f, 1.0f
-    } };
-    RenderingObject cube2{ {
-            -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-            -1.0f,-1.0f, 1.0f,
-            -1.0f, 1.0f, 1.0f, // triangle 1 : end
-            1.0f, 1.0f,-1.0f, // triangle 2 : begin
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f,-1.0f, // triangle 2 : end
-            1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f, 1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            -1.0f,-1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f, 1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f,-1.0f,
-            -1.0f, 1.0f,-1.0f,
-            1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f,-1.0f,
-            -1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f,
-            -1.0f, 1.0f, 1.0f,
-            1.0f,-1.0f, 1.0f
-        } };
+    };
+
+    RenderingObject cube{ cubeData, shaderProgramID };
+    RenderingObject cube2{ cubeData, shaderProgramID };
 
     cube.setPos(glm::vec3(-1.0f, 0.0f, 0.0f));
     cube2.setPos(glm::vec3(1.0f, 0.0f, 0.0f));
@@ -90,8 +61,7 @@ int main()
 	engine.addRenderingObject(cube);
 	engine.addRenderingObject(cube2);
 
-	engine.startEngine();
+	engine.startEngine(mainLoop);
 
-	
 	return 0;
 }

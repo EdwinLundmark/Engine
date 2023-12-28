@@ -10,6 +10,7 @@ using namespace std;
 #include <stdlib.h>
 #include <string.h>
 
+#define GLEW_STATIC
 #include <glew.h>
 
 #include "load-shader.hpp"

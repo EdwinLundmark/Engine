@@ -7,29 +7,16 @@
 #include "engine.hpp"
 #include <vector>
 
-void Engine::startEngine()
+void Engine::startEngine(std::function<void(Engine)> mainLoop)
 {
 
-	// Create and compile our GLSL program from the shaders
-	GLuint shaderProgramID = LoadShaders("shaders/shader.vertexshader", "shaders/shader.fragmentshader");
-
-	// Get a handle for our "MVP" uniform
-	// Only during the initialisation
-	GLuint MatrixID = glGetUniformLocation(shaderProgramID, "MVP");
-
-	windowLoop(shaderProgramID, MatrixID);
+	windowLoop(mainLoop);
 	return;
-}
-
-void Engine::addRenderingObject(std::vector<float> vertexBufferData)
-{
-	RenderingObject object(vertexBufferData);
-	m_renderingObjects.push_back(object);
 }
 
 void Engine::addRenderingObject(RenderingObject renderingObject)
 {
-	m_renderingObjects.push_back(renderingObject);
+	renderingObjects.push_back(renderingObject);
 }
 
 void GLAPIENTRY MessageCallback(GLenum source,
@@ -59,7 +46,7 @@ bool Engine::init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
-	m_window = glfwCreateWindow(1024, 768, "Window title", NULL, NULL);
+	m_window = glfwCreateWindow(width, height, "Window title", NULL, NULL);
 	if (m_window == NULL)
 	{
 		fprintf(stderr, "Failed to open GLFW window.\n");
@@ -86,7 +73,7 @@ bool Engine::init()
 	return true;
 }
 
-void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID)
+void Engine::windowLoop(std::function<void(Engine)> mainLoop)
 {
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -101,20 +88,21 @@ void Engine::windowLoop(GLuint shaderProgramID, GLuint MatrixID)
 		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(shaderProgramID);
 
 		deltaTime = glfwGetTime() - lastTime;
 		lastTime = glfwGetTime();
 
 		glfwGetCursorPos(m_window, &xpos, &ypos);
-		glfwSetCursorPos(m_window, m_width / 2, m_height / 2);
+		glfwSetCursorPos(m_window, width / 2, height / 2);
 
-		m_camera.moveWASD(m_window, (float)deltaTime);
-		m_camera.rotateFP((float)deltaTime, (float)xpos, (float)ypos);
+		mainLoop(*this);
 
-		for (auto& object : m_renderingObjects)
+		camera.moveWASD(m_window, (float)deltaTime);
+		camera.rotateFP((float)deltaTime, xpos, ypos, width, height);
+
+		for (auto& object : renderingObjects)
 		{
-			object.drawObject(m_window, MatrixID, m_camera);
+			renderer.renderObject(m_window, camera, object);
 		}
 
 		// Swap buffers

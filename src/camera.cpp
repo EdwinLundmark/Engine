@@ -55,10 +55,10 @@ void Camera::moveTo(const glm::vec3& position)
 	return;
 }
 
-void Camera::rotateFP(float deltaTime, float xpos, float ypos)
+void Camera::rotateFP(float deltaTime, float xpos, float ypos, float width, float height)
 {
-	m_pitch += mouseSpeed * deltaTime * (768.0f / 2.0f - ypos);
-	m_yaw += mouseSpeed * deltaTime * (1024.0f / 2.0f - xpos);
+	m_pitch += mouseSpeed * deltaTime * (height / 2.0f - ypos);
+	m_yaw += mouseSpeed * deltaTime * (width / 2.0f - xpos);
 
 	if (m_pitch < -3.14f / 2.0f) m_pitch = -3.14f / 2.0f;
 	

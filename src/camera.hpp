@@ -13,7 +13,7 @@ public:
 	void move(const glm::vec3& position);
 	void moveTo(const glm::vec3& position);
 	void moveWASD(GLFWwindow* window, float deltaTime);
-	void rotateFP(float deltaTime, float xpos, float ypos);
+	void rotateFP(float deltaTime, float xpos, float ypos, float width, float height);
 	glm::mat4 getVPMatrix();
 
 private:

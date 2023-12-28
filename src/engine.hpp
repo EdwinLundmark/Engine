@@ -4,23 +4,29 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "renderingobject.hpp"
+#include "load-shader.hpp"
 #include "camera.hpp"
+#include "renderer.hpp"
 #include <vector>
+#include <functional>
 
 class Engine
 {
 public:
 	bool init();
-	void startEngine();
-	void addRenderingObject(std::vector<GLfloat> vertexBufferData);
+	void startEngine(std::function<void(Engine)> mainLoop);
 	void addRenderingObject(RenderingObject renderingObject);
+	
+	Renderer renderer{};
+
+	std::vector<RenderingObject> renderingObjects;
+	
+	int width = 1024;
+	int height = 768;
+	Camera camera{ 45.0f, width, height, 0.1f, 100.0f };
 private:
 	GLFWwindow* m_window;
-	std::vector<RenderingObject> m_renderingObjects;
-	int m_width = 1024;
-	int m_height = 768;
 
-	Camera m_camera{ 45.0f, m_width, m_height, 0.1f, 100.0f };
 
-	void windowLoop(GLuint shaderProgramID, GLuint MatrixID);
+	void windowLoop(std::function<void(Engine)> mainLoop);
 };
