@@ -7,10 +7,37 @@
 #include "engine.hpp"
 #include <vector>
 
-void Engine::startEngine(std::function<void(Engine)> mainLoop)
+void Engine::startEngine(std::function<void(Engine&)> mainLoop)
 {
+	// Ensure we can capture the escape key being pressed below
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	windowLoop(mainLoop);
+	float lastTime = glfwGetTime();
+
+	do
+	{
+		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
+		//glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		deltaTime = glfwGetTime() - lastTime;
+		lastTime = glfwGetTime();
+
+		glfwGetCursorPos(window, &xpos, &ypos);
+		glfwSetCursorPos(window, width / 2, height / 2);
+
+		mainLoop(*this);
+
+		
+		// Swap buffers
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+	} // Check if the ESC key was pressed or the window was closed
+	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+		glfwWindowShouldClose(window) == 0);
+
 	return;
 }
 
@@ -46,15 +73,15 @@ bool Engine::init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
-	m_window = glfwCreateWindow(width, height, "Window title", NULL, NULL);
-	if (m_window == NULL)
+	window = glfwCreateWindow(width, height, "Window title", NULL, NULL);
+	if (window == NULL)
 	{
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		return false;
 	}
 
-	glfwMakeContextCurrent(m_window); // Initialize GLEW
+	glfwMakeContextCurrent(window); // Initialize GLEW
 	glewExperimental = true; // Needed in core profile
 	if (glewInit() != GLEW_OK)
 	{
@@ -73,45 +100,3 @@ bool Engine::init()
 	return true;
 }
 
-void Engine::windowLoop(std::function<void(Engine)> mainLoop)
-{
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	double lastTime = glfwGetTime();
-	double deltaTime = 0;
-	double xpos, ypos;
-
-	do
-	{
-		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
-		//glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		deltaTime = glfwGetTime() - lastTime;
-		lastTime = glfwGetTime();
-
-		glfwGetCursorPos(m_window, &xpos, &ypos);
-		glfwSetCursorPos(m_window, width / 2, height / 2);
-
-		mainLoop(*this);
-
-		camera.moveWASD(m_window, (float)deltaTime);
-		camera.rotateFP((float)deltaTime, xpos, ypos, width, height);
-
-		for (auto& object : renderingObjects)
-		{
-			renderer.renderObject(m_window, camera, object);
-		}
-
-		// Swap buffers
-		glfwSwapBuffers(m_window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-		glfwWindowShouldClose(m_window) == 0);
-
-	return;
-}

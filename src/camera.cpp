@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include "GLFW\glfw3.h"
+#include <iostream>
 
 // TODO: set default values, add pitch and yaw maybe
 Camera::Camera(float FOV, int width, int height, float near, float far)
@@ -64,9 +65,9 @@ void Camera::rotateFP(float deltaTime, float xpos, float ypos, float width, floa
 	
 	if (m_pitch > 3.14f / 2.0f) m_pitch = 3.14f / 2.0f;
 	
-	if(m_yaw < -3.14) m_yaw = 3.14;
+	if(m_yaw < -3.14f) m_yaw = 3.14f;
 
-	if(m_yaw > 3.14 * 3) m_yaw = 3.14;
+	if(m_yaw > 3.14f * 3.0f) m_yaw = 3.14f;
 
 	updateViewMatrix();
 

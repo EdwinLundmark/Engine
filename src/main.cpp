@@ -1,7 +1,15 @@
 #include "engine.hpp"
 #include <vector>
 
-void mainLoop(Engine engine) {
+void mainLoop(Engine& e) {
+    e.camera.moveWASD(e.window, e.deltaTime);
+    e.camera.rotateFP(e.deltaTime, e.xpos, e.ypos, e.width, e.height);
+
+    for (auto& object : e.renderingObjects)
+    {
+        e.renderer.renderObject(e.window, e.camera, object);
+    }
+
     return;
 }
 
