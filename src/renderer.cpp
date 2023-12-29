@@ -12,7 +12,7 @@ void Renderer::renderObject(GLFWwindow* window, Camera& camera, RenderingObject&
 	
 	glm::mat4 vp = camera.getVPMatrix();
 
-	glm::mat4 mvp = vp * object.translation * object.model; // Remember, matrix multiplication is the other way around
+	glm::mat4 mvp = vp * object.translation * object.rotation * object.scale; // Remember, matrix multiplication is the other way around
 
 	glBindVertexArray(object.vao);
 	// Give our vertices to OpenGL.

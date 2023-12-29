@@ -63,8 +63,10 @@ int main()
     RenderingObject cube{ cubeData, shaderProgramID };
     RenderingObject cube2{ cubeData, shaderProgramID };
 
-    cube.setPos(glm::vec3(-1.0f, 0.0f, 0.0f));
-    cube2.setPos(glm::vec3(1.0f, 0.0f, 0.0f));
+    cube.setPos(-1.0f, 0.0f, 0.0f);
+    cube2.setPos(1.0f, 0.0f, 0.0f);
+
+    cube.setRot(-45, X);
 
 	engine.addRenderingObject(cube);
 	engine.addRenderingObject(cube2);

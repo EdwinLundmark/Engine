@@ -5,13 +5,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "camera.hpp"
 
+enum Axis
+{
+	X,
+	Y,
+	Z
+};
 
 class RenderingObject
 {
 public:
 	RenderingObject(std::vector<GLfloat> vertexBufferData,GLuint shaderID);
 
-	void setPos(glm::vec3 position);
+	void setScale(float x, float y, float z);
+	void setRot(float angle, Axis axis);
+	void setPos(float x, float y, float z);
 	
 	std::vector<GLfloat> vertexBufferData;
 	GLuint vbo;
@@ -19,7 +27,8 @@ public:
 	GLuint shaderID;
 	GLuint matrixUniform;
 
-	glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
+	glm::mat4 scale = glm::mat4(1.0f);
+	glm::mat4 rotation = glm::mat4(1.0f);
+	glm::mat4 translation = glm::mat4(1.0f);
 
 };
